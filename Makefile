@@ -31,9 +31,9 @@ libimobiledevice_INSTALL_PATH = /Applications/$(APPLICATION_NAME).app/Frameworks
 
 SparseBox_FILES = \
   ClothiqApp.swift \
-  Views/ContentView.swift
-  Views/RegisterPersonalInfoView.swift
-  Views/RegisterEmailView.swift
+  Views/ContentView.swift \
+  Views/RegisterPersonalInfoView.swift \
+  Views/RegisterEmailView.swift \
   Views/LoginView.swift
   
 
