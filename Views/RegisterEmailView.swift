@@ -1,3 +1,5 @@
+import SwiftUI
+
 struct RegisterEmailView: View {
     @State private var email: String = ""
     @State private var password: String = ""
