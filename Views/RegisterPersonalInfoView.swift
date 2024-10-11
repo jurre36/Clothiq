@@ -1,3 +1,5 @@
+import SwiftUI
+
 struct RegisterPersonalInfoView: View {
     @State private var firstName: String = ""
     @State private var lastName: String = ""
