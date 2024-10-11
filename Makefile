@@ -6,19 +6,20 @@ include $(THEOS)/makefiles/common.mk
 
 APPLICATION_NAME = Clothiq
 
-
-
-
-
-
-SparseBox_FILES = \
+# Source files for the application
+Clothiq_FILES = \
   ClothiqApp.swift \
   Views/ContentView.swift \
   Views/RegisterPersonalInfoView.swift \
   Views/RegisterEmailView.swift \
   Views/LoginView.swift
-  
 
+# Required frameworks for the app
 Clothiq_FRAMEWORKS = UIKit
-include $(THEOS_MAKE_PATH)/library.mk
+
+# Compiler and linker flags
+Clothiq_CFLAGS = -fcommon -fobjc-arc
+Clothiq_LDFLAGS = -L$(THEOS_OBJ_DIR) -rpath @executable_path/Frameworks
+Clothiq_CODESIGN_FLAGS = -Sentitlements.plist
+
 include $(THEOS_MAKE_PATH)/application.mk
