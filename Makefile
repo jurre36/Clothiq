@@ -15,7 +15,8 @@ Clothiq_FILES = \
   Views/LoginView.swift
 
 # Required frameworks for the app
-Clothiq_FRAMEWORKS = UIKit
+Clothiq_FRAMEWORKS = UIKit SwiftUI
+
 
 # Compiler and linker flags
 Clothiq_CFLAGS = -fcommon -fobjc-arc
