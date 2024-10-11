@@ -39,7 +39,6 @@ jobs:
           export THEOS=theos
 
           git submodule update --init
-          bash get_libraries.sh
           gmake package FINALPACKAGE=1 STRIP=0
 
       - name: Upload artifact
