@@ -1,56 +1,47 @@
-# Project configuration
-PROJECT_NAME = ClothiqApp
-SCHEME = $(PROJECT_NAME)
-SDK = iphonesimulator
-DESTINATION = "platform=iOS Simulator,name=iPhone 14 Pro"
+ARCHS := arm64
+PACKAGE_FORMAT := ipa
+TARGET := iphone:clang:latest:16.0
 
-# Default target: build the app
-build:
-	@echo "Building $(PROJECT_NAME)..."
-	xcodebuild \
-		-project $(PROJECT_NAME).xcodeproj \
-		-scheme $(SCHEME) \
-		-sdk $(SDK) \
-		-destination $(DESTINATION) \
-		clean build
+include $(THEOS)/makefiles/common.mk
 
-# Clean build artifacts
-clean:
-	@echo "Cleaning project..."
-	xcodebuild \
-		-project $(PROJECT_NAME).xcodeproj \
-		-scheme $(SCHEME) \
-		clean
+APPLICATION_NAME = Clothiq
+LIBRARY_NAME = libEMProxy libimobiledevice
 
-# Run the app on the simulator
-run: build
-	@echo "Running $(PROJECT_NAME) on simulator..."
-	xcrun simctl boot "iPhone 14 Pro"
-	xcrun simctl install booted build/Build/Products/Debug-iphonesimulator/$(PROJECT_NAME).app
-	xcrun simctl launch booted $(BUNDLE_ID)
+# Link em_proxy separately as it has duplicated symbols with minimuxer
+libEMProxy_FILES = lib/empty.swift
+libEMProxy_LDFLAGS = -force_load lib/libem_proxy-ios.a -install_name @rpath/libEMProxy.dylib
+libEMProxy_FRAMEWORKS = Security
+libEMProxy_INSTALL_PATH = /Applications/$(APPLICATION_NAME).app/Frameworks
 
-# Open the project in Xcode
-open:
-	@echo "Opening $(PROJECT_NAME) in Xcode..."
-	open $(PROJECT_NAME).xcodeproj
+# libimobiledevice + minimuxer
+libimobiledevice_FILES = idevicebackup2.c
+libimobiledevice_CFLAGS = -Iinclude
+libimobiledevice_LDFLAGS = \
+  -force_load lib/libimobiledevice-1.0.a \
+  -force_load lib/libimobiledevice-glue-1.0.a \
+  -force_load lib/libplist-2.0.a \
+  -force_load lib/libusbmuxd-2.0.a \
+  -force_load lib/libcrypto.a \
+  -force_load lib/libssl.a \
+  -force_load lib/libminimuxer-ios.a \
+  -Wl,-mllvm,--opaque-pointers \
+  -install_name @rpath/libimobiledevice.dylib
+libimobiledevice_FRAMEWORKS = Foundation Security SystemConfiguration
+libimobiledevice_INSTALL_PATH = /Applications/$(APPLICATION_NAME).app/Frameworks
 
-# Archive the app for release
-archive:
-	@echo "Archiving $(PROJECT_NAME)..."
-	xcodebuild \
-		-project $(PROJECT_NAME).xcodeproj \
-		-scheme $(SCHEME) \
-		-sdk $(SDK) \
-		-archivePath build/$(PROJECT_NAME).xcarchive \
-		archive
+SparseBox_FILES = \
+  ClothiqApp.swift \
+  Views/ContentView.swift
+  Views/RegisterPersonalInfoView.swift
+  Views/RegisterEmailView.swift
+  Views/LoginView.swift
+  
 
-# Generate IPA for App Store distribution
-ipa: archive
-	@echo "Exporting IPA..."
-	xcodebuild \
-		-exportArchive \
-		-archivePath build/$(PROJECT_NAME).xcarchive \
-		-exportPath build/$(PROJECT_NAME) \
-		-exportOptionsPlist ExportOptions.plist
-
-.PHONY: build clean run open archive ipa
+Clothiq_FRAMEWORKS = UIKit
+Clothiq_CFLAGS = -fcommon -fobjc-arc
+Clothiq_SWIFTFLAGS = -Iinclude -import-objc-header include/minimuxer-Bridging-Header.h
+Clothiq_LDFLAGS = -L$(THEOS_OBJ_DIR) -rpath @executable_path/Frameworks
+Clothiq_LIBRARIES = EMProxy imobiledevice
+Clothiq_CODESIGN_FLAGS = -Sentitlements.plist
+include $(THEOS_MAKE_PATH)/library.mk
+include $(THEOS_MAKE_PATH)/application.mk
