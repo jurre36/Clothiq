@@ -1,3 +1,4 @@
+import SwiftUI
 struct LoginView: View {
     @State private var email: String = ""
     @State private var password: String = ""
