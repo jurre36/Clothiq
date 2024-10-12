@@ -8,11 +8,11 @@ APPLICATION_NAME = Clothiq
 
 # Source files for the application
 Clothiq_FILES = \
-  ClothiqApp.swift \
-  Views/ContentView.swift \
-  Views/RegisterPersonalInfoView.swift \
-  Views/RegisterEmailView.swift \
-  Views/LoginView.swift
+  Sources/ClothiqApp.swift \
+  Sources/ContentView.swift \
+  Sources/RegisterPersonalInfoView.swift \
+  Sources/RegisterEmailView.swift \
+  Sources/LoginView.swift
 
 # Required frameworks for the app
 Clothiq_FRAMEWORKS = UIKit SwiftUI
